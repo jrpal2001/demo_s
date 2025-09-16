@@ -1,0 +1,174 @@
+// import React, { useState } from 'react';
+// import { useForm, Controller } from 'react-hook-form';
+// import { Grid, MenuItem, Button, Typography } from '@mui/material';
+// import Breadcrumb from '@/layouts/full/shared/breadcrumb/Breadcrumb';
+// import PageContainer from '@/components/container/PageContainer';
+// import CustomTextField from '@/components/forms/theme-elements/CustomTextField';
+// import CustomSelect from '@/components/forms/theme-elements/CustomSelect';
+// import CustomFormLabel from '@/components/forms/theme-elements/CustomFormLabel';
+// import ParentCard from '@/components/shared/ParentCard';
+// import { Stack } from '@mui/system';
+// import { storeProductMaster } from '@/api/admin';
+// import { toast } from 'react-toastify';
+// import { useNavigate } from 'react-router-dom';
+// import { LoadingButton } from '@mui/lab';
+
+// const BCrumb = [
+//   { to: '/', title: 'Home' },
+//   { to: '/admin/products', title: 'Products' },
+//   { title: 'Add' },
+// ];
+
+// const fields = [
+//   { label: 'SKU NO', id: 'skuNo', type: 'text', required: 'SKU NO is required' },
+//   {
+//     label: 'ITEM DESCRIPTION',
+//     id: 'itemDescription',
+//     type: 'text',
+//     required: 'Item description is required',
+//   },
+//   {
+//     label: 'DIVISION',
+//     id: 'division',
+//     type: 'text',
+//     required: 'DIVISION is required',
+//   },
+//   { label: 'PRODUCT', id: 'product', type: 'text', required: 'Product is required' },
+//   { label: 'BRAND', id: 'brand', type: 'text', required: 'BRAND Code is required' },
+//   { label: 'STYLE', id: 'style', type: 'text', required: 'Style is required' },
+//   { label: 'COLOR CODE', id: 'colorCode', type: 'text', required: 'Color Code is required' },
+//   { label: 'SIZE', id: 'size', type: 'text', required: 'SIZE is required' },
+//   { label: 'SLEEVES', id: 'sleeves', type: 'text', required: 'SLEEVES is required' },
+//   { label: 'SUPPLIER', id: 'supplier', type: 'text', required: 'Supplier is required' },
+//   { label: 'ARTICLE NO', id: 'articleNo', type: 'text', required: 'Article No is required' },
+//   { label: 'COLOR NAME', id: 'colorName', type: 'text', required: 'COLOR NAME is required' },
+//   { label: 'PATTERN', id: 'pattern', type: 'text', required: 'PATTERN is required' },
+//   { label: 'TYPE', id: 'type', type: 'text', required: 'Type is required' },
+//   { label: 'PKT', id: 'pkt', type: 'text', required: 'PKT is required' },
+//   { label: 'FIT', id: 'fit', type: 'text', required: 'Fit is required' },
+//   { label: 'HSN CODE', id: 'hsnCode', type: 'text', required: 'Hsn Code is required' },
+//   { label: 'GST GROUP', id: 'gstGroup', type: 'number', required: 'GST is required' },
+//   { label: 'COST PRICE', id: 'costPrice', type: 'number', required: 'Cost Price is required' },
+//   {
+//     label: 'RETAIL PRICE',
+//     id: 'retailPrice',
+//     type: 'number',
+//     required: 'Retail Price is required',
+//   },
+//   { label: 'MRP', id: 'mrp', type: 'number', required: 'Mrp is required' },
+//   { label: 'WSP', id: 'wsp', type: 'number', required: 'WSP is required' },
+//   {
+//     label: 'UOM',
+//     id: 'uom',
+//     type: 'text',
+//     required: 'UOM is required',
+//   },
+// ];
+
+// const AddProductMaster = () => {
+//   const navigate = useNavigate();
+//   const [isSubmitting, setIsSubmitting] = useState(false);
+//   const {
+//     handleSubmit,
+//     control,
+//     register,
+//     formState: { errors },
+//     setError,
+//   } = useForm();
+
+//   const onSubmit = async (data) => {
+//     setIsSubmitting(true);
+//     try {
+//       const response = await storeProductMaster(data);
+//       navigate('/admin/products');
+//       toast.success(response.message);
+//     } catch (err) {
+//       if (err.statusCode === 403) {
+//         err.errors.forEach(({ field, message }) => {
+//           setError(field, {
+//             type: 'manual',
+//             message: message,
+//           });
+//         });
+//       }
+//       console.error(err);
+//     } finally {
+//       setIsSubmitting(false);
+//     }
+//   };
+
+//   return (
+//     <PageContainer title="Add Product" description="This is the Add Product page">
+//       <Breadcrumb title="Add Product" items={BCrumb} />
+//       <ParentCard title="Add Master">
+//         <form onSubmit={handleSubmit(onSubmit)}>
+//           <Grid container spacing={3}>
+//             {fields.map((fieldConfig) => (
+//               <Grid item xs={12} sm={12} lg={4} key={fieldConfig.id}>
+//                 <CustomFormLabel htmlFor={fieldConfig.id}>{fieldConfig.label}</CustomFormLabel>
+//                 {fieldConfig.type === 'select' ? (
+//                   <Controller
+//                     name={fieldConfig.id}
+//                     control={control}
+//                     rules={{ required: fieldConfig.required }}
+//                     render={({ field, fieldState }) => (
+//                       <>
+//                         <CustomSelect
+//                           {...field}
+//                           id={fieldConfig.id}
+//                           fullWidth
+//                           size="small"
+//                           error={!!fieldState.error}
+//                         >
+//                           <MenuItem value="">Select {fieldConfig.label}</MenuItem>
+//                           {fieldConfig.options?.map((option, index) => (
+//                             <MenuItem key={index} value={option}>
+//                               {option}
+//                             </MenuItem>
+//                           ))}
+//                         </CustomSelect>
+//                         {fieldState.error && (
+//                           <Typography color="error" variant="body2" style={{ marginTop: 4 }}>
+//                             {fieldState.error.message}
+//                           </Typography>
+//                         )}
+//                       </>
+//                     )}
+//                   />
+//                 ) : (
+//                   <CustomTextField
+//                     {...register(fieldConfig.id, { required: fieldConfig.required })}
+//                     id={fieldConfig.id}
+//                     placeholder={`Enter ${fieldConfig.label}`}
+//                     variant="outlined"
+//                     fullWidth
+//                     size="small"
+//                     type={fieldConfig.type}
+//                     error={!!errors[fieldConfig.id]}
+//                     helperText={errors[fieldConfig.id]?.message}
+//                   />
+//                 )}
+//               </Grid>
+//             ))}
+//           </Grid>
+//           <Stack direction="row" spacing={2} justifyContent="flex-end" marginTop={3}>
+//             <LoadingButton
+//               loading={isSubmitting}
+//               type="submit"
+//               variant="contained"
+//               color="primary"
+//               // endIcon={<IconPrinter width={18} />}
+//             >
+//               Save
+//             </LoadingButton>
+//             <Button disabled={isSubmitting} type="reset" variant="outlined">
+//               Reset
+//             </Button>
+//           </Stack>
+//         </form>
+//       </ParentCard>
+//     </PageContainer>
+//   );
+// };
+
+// export default AddProductMaster;
